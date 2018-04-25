@@ -5,8 +5,14 @@
 }
 
 main {
-   width: 80vw;
+   width: 100vw;
    height: 100vh;
-   margin: 0 auto;
+   background-color: lightblue;
    position: relative;
+   overflow: auto;
+}
+
+.film {
+   background-color: lightgreen;
+   margin: 10px;
 }
