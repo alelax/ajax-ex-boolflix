@@ -28,8 +28,11 @@ $(document).ready(function(){
       //13 = Tasto invio
       if (e.which == 13) {
          thisInputVal = thisInput.val();
-         console.log(thisInputVal);
-         ajaxCall(thisInputVal);
+         resetInput(thisInput);
+         $('.film-list').html('');
+         ajaxMoviesCall(thisInputVal);
+         ajaxSeriesCall(thisInputVal);
+
       }
    });
 
@@ -37,16 +40,15 @@ $(document).ready(function(){
    //e invio una richiesta AJAX alla API TMDb.
    $('#search-btn').click(function(){
       thisInputVal = thisInput.val();
-      console.log(thisInputVal);
       resetInput(thisInput);
       //Cancello i risultati di una eventuale richiesta precedente
       $('.film-list').html('');
       ajaxMoviesCall(thisInputVal);
-
-      $('.series-list').html('');
       ajaxSeriesCall(thisInputVal);
    });
 
+
+   /* ***** FUNZIONI ***** */
 
    //Funziona che inoltra la chiamata AJAX. Il parametro ricevuto in ingresso
    //è il valore recuperato dal campo input
@@ -61,12 +63,15 @@ $(document).ready(function(){
          },
          success : function(data){
             console.log(data);
+            var moviesFromAPI = data.results;
 
             //Solo se il risutato della ricerca ha almeno un elemento verrà
             //stampato a video altrimenti comparirà un avviso di ricerca non
             //andata a buon fine
-            if (data.results.length > 0) {
-               showMovies(data);
+            if (moviesFromAPI.length > 0) {
+               var movies = getMovies(moviesFromAPI);
+               console.log(movies);
+               showResults(movies);
             } else {
                showNoResults("film-list");
             }
@@ -88,13 +93,14 @@ $(document).ready(function(){
          },
          success : function(dataSerie){
             console.log(dataSerie);
-            showSeries(dataSerie);
+            tvshowsFromAPI = dataSerie.results;
+
             //Solo se il risutato della ricerca ha almeno un elemento verrà
             //stampato a video altrimenti comparirà un avviso di ricerca non
             //andata a buon fine
-            if (dataSerie.results.length > 0) {
-
-               //showMovies(data);
+            if (tvshowsFromAPI.length > 0) {
+               var tvShows = getTvShows(tvshowsFromAPI);
+               showResults(tvShows);
             } else {
                showNoResults("series-list");
             }
@@ -105,128 +111,131 @@ $(document).ready(function(){
       });
    }
 
-
-
    //Funzione per il reset dell'input
    function resetInput(inputField) {
       inputField.val('');
    }
 
-   //Funzione che mostra tutti i risultati corrispondenti alla ricerca fatta
-   function showMovies(movies) {
 
-      for (var i = 0; i < movies.results.length; i++) {
-         var currentFilm = movies.results[i];
+   function showResults(object) {
+      for (var i = 0; i < object.length; i++) {
+
+         var currentResult = object[i];
+         var containerClass = "";
+         var typeResultClass = "";
 
          //Se il titolo del film coincide con quello originale, il titolo verrà mostrato solo una volta
-         if (currentFilm.title == currentFilm.original_title) {
-            currentFilm.original_title = "";
+         if (currentResult.title == currentResult.original_title) {
+            currentResult.original_title = "";
          }
 
-         //La bandiera del regno unito nell'API da cui viene recuperata è indicata con la sigla "gb"
-         //mentre in themoviedb con "en". Per riuscire a mostrarla cambio la sigla
-         if (currentFilm.original_language == "en") {
-            currentFilm.original_language = "gb";
+         //Assgno la classe container nella quale verranno inseriti i film oppure quella in cui verrano
+         //inserite le serieTv. Controllo che viene fatto in base al tipo di risultato corrente
+         if (currentResult.type == "film") {
+            containerClass = ".film-list";
+            typeResultClass = "film";
+         } else if (currentResult.type == "tvShow") {
+            containerClass = ".series-list";
+            typeResultClass = "serie";
          }
 
          //Inserisco nell'html tutti i dati di ogni singolo film trovato
-         $('.film-list').append(
-            "<div id=" + currentFilm.id + " class='film'>" +
-               "<div class='film-container'>" +
-                  "<img src='https://image.tmdb.org/t/p/w342" + currentFilm.poster_path + "'>" +
-               "</div>" +
-               "<div class='info'>" +
-                  "<h1>" + currentFilm.title + "</h1>" +
-                  "<h2>" + currentFilm.original_title + "</h2>" +
-                  "<h3>" +
-                     // Link a CountryFlagsAPI, restituisce la bandiera in base alla nazione passata
-                     '<img src="http://www.countryflags.io/'+currentFilm.original_language+'/flat/32.png" alt="' + currentFilm.original_language + '"' + '>' +
-                  "</h3>" +
-                  "<h3>" + currentFilm.vote_average + "</h3>" +
-                  "<div class='movie-stars'>"
-         );
-
-         //Trasfomo i voti decimali da 1 a 10 in un voto da 1 a 5
-         var vote = Math.round(currentFilm.vote_average / 2);
-
-         //Ciclo che assegna un numero di stelle pari al voto del film
-         for (var j = 0; j < 5 ; j++) {
-            //vengono aggiunte stelle gialle finchè j è minore del voto corrente
-            //Per eventuali spazi restanti verranno aggiunte stelle vuote
-            if (j < vote) {
-               $('#'+currentFilm.id).children('.info').children('.movie-stars').append(
-                  "<i class='fa fa-star fa-lg' aria-hidden='true'></i>"
-               );
-            } else {
-               $('#'+currentFilm.id).children('.info').children('.movie-stars').append(
-                  "<i class='fa fa-star-o fa-lg' aria-hidden='true'></i>"
-               );
-            }
-         }
-
-         $('.film-list').append(
-               "</div>" + "</div>" + "</div>"
-         );
-      }
-   }
-
-   function showSeries(series) {
-
-      for (var i = 0; i < series.results.length; i++) {
-         var currentSeries = series.results[i];
-
-         //Se il titolo del film coincide con quello originale, il titolo verrà mostrato solo una volta
-         if (currentSeries.title == currentSeries.original_title) {
-            currentSeries.original_title = "";
-         }
-
-         //La bandiera del regno unito nell'API da cui viene recuperata è indicata con la sigla "gb"
-         //mentre in themoviedb con "en". Per riuscire a mostrarla cambio la sigla
-         if (currentSeries.original_language == "en") {
-            currentSeries.original_language = "gb";
-         }
-
-         //Inserisco nell'html tutti i dati di ogni singolo film trovato
-         $('.series-list').append(
-            "<div id=" + currentSeries.id + " class='serie'>" +
+         $(containerClass).append(
+            "<div class='" + typeResultClass + "'>" +
                "<div class='poster-container'>" +
-                  "<img src='https://image.tmdb.org/t/p/w342" + currentSeries.poster_path + "'>" +
+                  "<img src='https://image.tmdb.org/t/p/w342" + currentResult.poster + "'>" +
                "</div>" +
                "<div class='info'>" +
-                  "<h1>" + currentSeries.name + "</h1>" +
-                  "<h2>" + currentSeries.original_name + "</h2>" +
-                  "<h3>" +
-                     // Link a CountryFlagsAPI, restituisce la bandiera in base alla nazione passata
-                     '<img src="http://www.countryflags.io/'+currentSeries.original_language+'/flat/32.png" alt="' + currentSeries.original_language + '"' + '>' +
-                  "</h3>" +
-                  "<h3>" + currentSeries.vote_average + "</h3>" +
-                  "<div class='series-stars'>"
-         );
-
-         //Trasfomo i voti decimali da 1 a 10 in un voto da 1 a 5
-         var vote = Math.round(currentSeries.vote_average / 2);
-
-         //Ciclo che assegna un numero di stelle pari al voto del film
-         for (var j = 0; j < 5 ; j++) {
-            //vengono aggiunte stelle gialle finchè j è minore del voto corrente
-            //Per eventuali spazi restanti verranno aggiunte stelle vuote
-            if (j < vote) {
-               $('#'+currentSeries.id).children('.info').children('.series-stars').append(
-                  "<i class='fa fa-star fa-lg' aria-hidden='true'></i>"
-               );
-            } else {
-               $('#'+currentSeries.id).children('.info').children('.series-stars').append(
-                  "<i class='fa fa-star-o fa-lg' aria-hidden='true'></i>"
-               );
-            }
-         }
-
-         $('.film-list').append(
-               "</div>" + "</div>" + "</div>"
+                  "<h1>" + currentResult.title + "</h1>" +
+                  "<h2>" + currentResult.original_title + "</h2>" +
+                  // Link a CountryFlagsAPI, restituisce la bandiera in base alla nazione passata
+                  "<h3>" + getFlag(currentResult.original_language) + "</h3>" +
+                  "<h4>" + currentResult.vote + "</h4>" +
+                  "<div class='movie-stars'>" + getRating(currentResult.vote) + "</div>" +
+               "</div>" +
+            "</div>"
          );
       }
+   }
+
+   //Funzione che riceve un voto e restituisce un html con un numero di stelle gialle pari al voto
+   function getRating(vote) {
+
+      var html = '';
+
+      //Trasfomo i voti decimali da 1 a 10 in un voto da 1 a 5
+      var newVote = Math.floor(vote / 2);
+
+      //Ciclo che assegna un numero di stelle pari al voto del film
+      for (var i = 0; i < 5; i++) {
+         //vengono aggiunte stelle gialle finchè j è minore del voto corrente
+         //Per eventuali spazi restanti verranno aggiunte stelle vuote
+         if (i < newVote) {
+            html += "<i class='fa fa-star fa-lg' aria-hidden='true'></i>";
+         } else {
+            html += "<i class='fa fa-star-o fa-lg' aria-hidden='true'></i>";
+         }
+      }
+
+      return html;
 
    }
+
+   //Funzione che riceve la lingua del film e restiutisce un html con la corrispondente bandiera
+   function getFlag(lang) {
+
+      var html = '';
+      //La bandiera del regno unito nell'API da cui viene recuperata è indicata con la sigla "gb"
+      //mentre in themoviedb con "en". Per riuscire a mostrarla cambio la sigla
+      if (lang == "en") {
+         lang = "gb";
+      }
+
+      html += '<img src="http://www.countryflags.io/'+lang+'/flat/32.png" alt="'+lang+'"'+'>';
+
+      return html;
+   }
+
+   function getMovies(moviesFromAPI) {
+
+      var movies = [];
+
+      for (var i = 0; i < moviesFromAPI.length; i++) {
+         currentMovie = moviesFromAPI[i];
+
+         movies[i] = {
+            "title" : currentMovie.title,
+            "original_title" : currentMovie.original_title,
+            "original_language" : currentMovie.original_language,
+            "vote" : currentMovie.vote_average,
+            "poster" : currentMovie.poster_path,
+            "type" : "film"
+         };
+
+      }
+      return movies;
+   }
+
+   function getTvShows(tvshowsFromAPI) {
+
+      var tvShows = [];
+
+      for (var i = 0; i < tvshowsFromAPI.length; i++) {
+         currentTvshow = tvshowsFromAPI[i];
+
+         tvShows[i] = {
+            "title" : currentTvshow.name,
+            "original_title" : currentTvshow.original_name,
+            "original_language" : currentTvshow.original_language,
+            "vote" : currentTvshow.vote_average,
+            "poster" : currentTvshow.poster_path,
+            "type" : "tvShow"
+         };
+
+      }
+      return tvShows;
+   }
+
    //Se la ricerca non produce risultati verrà notificato tramite questa funzione
    function showNoResults(className) {
       $('.' + className).append(
