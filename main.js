@@ -143,7 +143,7 @@ $(document).ready(function(){
                      '<img src="http://www.countryflags.io/'+currentFilm.original_language+'/flat/32.png" alt="' + currentFilm.original_language + '"' + '>' +
                   "</h3>" +
                   "<h3>" + currentFilm.vote_average + "</h3>" +
-                  "<div class='stars'>"
+                  "<div class='movie-stars'>"
          );
 
          //Trasfomo i voti decimali da 1 a 10 in un voto da 1 a 5
@@ -154,11 +154,11 @@ $(document).ready(function(){
             //vengono aggiunte stelle gialle finchè j è minore del voto corrente
             //Per eventuali spazi restanti verranno aggiunte stelle vuote
             if (j < vote) {
-               $('#'+currentFilm.id).children('.stars').append(
+               $('#'+currentFilm.id).children('.info').children('.movie-stars').append(
                   "<i class='fa fa-star fa-lg' aria-hidden='true'></i>"
                );
             } else {
-               $('#'+currentFilm.id).children('.stars').append(
+               $('#'+currentFilm.id).children('.info').children('.movie-stars').append(
                   "<i class='fa fa-star-o fa-lg' aria-hidden='true'></i>"
                );
             }
@@ -200,7 +200,7 @@ $(document).ready(function(){
                      '<img src="http://www.countryflags.io/'+currentSeries.original_language+'/flat/32.png" alt="' + currentSeries.original_language + '"' + '>' +
                   "</h3>" +
                   "<h3>" + currentSeries.vote_average + "</h3>" +
-                  "<div class='stars'>"
+                  "<div class='series-stars'>"
          );
 
          //Trasfomo i voti decimali da 1 a 10 in un voto da 1 a 5
@@ -211,11 +211,11 @@ $(document).ready(function(){
             //vengono aggiunte stelle gialle finchè j è minore del voto corrente
             //Per eventuali spazi restanti verranno aggiunte stelle vuote
             if (j < vote) {
-               $('#'+currentSeries.id).children('.stars').append(
+               $('#'+currentSeries.id).children('.info').children('.series-stars').append(
                   "<i class='fa fa-star fa-lg' aria-hidden='true'></i>"
                );
             } else {
-               $('#'+currentSeries.id).children('.stars').append(
+               $('#'+currentSeries.id).children('.info').children('.series-stars').append(
                   "<i class='fa fa-star-o fa-lg' aria-hidden='true'></i>"
                );
             }
