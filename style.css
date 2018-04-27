@@ -13,6 +13,17 @@ main {
 }
 
 .film {
+   display: flex;
    background-color: lightgreen;
    margin: 10px;
+}
+
+.serie {
+   display: flex;
+   background-color: rgba(255, 15, 15, 0.81);
+   margin: 10px;
+}
+
+.fa-star {
+   color: rgb(231, 229, 20);
 }
