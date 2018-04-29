@@ -4,6 +4,7 @@
       <meta charset="utf-8">
       <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.css">
       <link rel="stylesheet" type="text/css" href="style.css">
+       <link href="https://fonts.googleapis.com/css?family=Montserrat:500" rel="stylesheet">
       <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
       <script src="moment.js"></script>
       <title>Boolflix</title>
@@ -11,17 +12,20 @@
    <body>
 
       <nav>
-         <input id="search-input" type="text" name="" value="" placeholder="Search film">
-         <button id="search-btn" type="button" name="button">Search</button>
+         <div class="search-ctn">
+            <input id="search-input" type="text" name="" value="" placeholder="Search film">
+            <button id="search-btn" type="button" name="button">Search</button>
+         </div>
       </nav>
 
       <main>
 
-         <div class="film-list">
+         <div class="film-list border-right">
+            <div class="type-header">Film</div>
 
          </div>
          <div class="series-list">
-
+            <div class="type-header">Serie Tv</div>
          </div>
 
       </main>
