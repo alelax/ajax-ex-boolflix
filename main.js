@@ -198,13 +198,17 @@ $(document).ready(function(){
          if (currentResult.type == "film") {
             containerClass = ".film-list";
             typeResultClass = "film";
+            typeHeader = '<div class="type-header">Film</div>';
          } else if (currentResult.type == "tvShow") {
             containerClass = ".series-list";
             typeResultClass = "serie";
+            typeHeader = '<div class="type-header">Serie Tv</div>';
+
          }
 
          //Inserisco nell'html tutti i dati di ogni singolo film trovato
          $(containerClass).append(
+
             "<div class='" + typeResultClass + "'>" +
                posterBoxO +
                   posterImageTemp + posterImageC +
@@ -326,5 +330,6 @@ $(document).ready(function(){
          '<div class="type-header">'+section+"</div>"
       );
       $(classList).addClass('border-right');
+      $(classList).css('background-color', "#FFFFFF");
    }
 });
