@@ -314,7 +314,7 @@ $(document).ready(function(){
    function showNoResults(className) {
       $('.' + className).append(
          "<div class='film'>" +
-            "<h2>" + "La ricerca non ha prodotto risultati" + "</h2>" +
+            "<h2 id='warning-msg'>" + "La ricerca non ha prodotto risultati" + "</h2>" +
          "</div>"
       );
    }
@@ -325,5 +325,6 @@ $(document).ready(function(){
       $(classList).html('').append(
          '<div class="type-header">'+section+"</div>"
       );
+      $(classList).addClass('border-right');
    }
 });
