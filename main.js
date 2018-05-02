@@ -306,7 +306,7 @@ $(document).ready(function(){
             "original_language" : currentTvshow.original_language,
             "vote" : currentTvshow.vote_average,
             "poster" : currentTvshow.poster_path,
-            "overview" : currentMovie.overview,
+            "overview" : currentTvshow.overview,
             "type" : "tvShow"
          };
 
